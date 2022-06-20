@@ -17,6 +17,8 @@ val Scala213 = "2.13.8"
 ThisBuild / crossScalaVersions := Seq(Scala213)
 ThisBuild / scalaVersion       := Scala213 // the default Scala
 
+ThisBuild / scalacOptions ++= (if (tlIsScala3.value) Seq() else Seq("-language:implicitConversions", "-Xsource:3"))
+
 lazy val root = tlCrossRootProject.aggregate(core, tests)
 
 lazy val core = crossProject(JVMPlatform)
