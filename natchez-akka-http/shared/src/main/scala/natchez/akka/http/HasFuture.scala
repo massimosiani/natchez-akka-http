@@ -1,11 +1,10 @@
 package natchez.akka.http
 
 import cats.data.Kleisli
+import cats.effect.IO
 import cats.effect.unsafe.implicits.global
-import cats.effect.{IO, Resource}
-import cats.syntax.all.*
-import cats.{Applicative, Id, Monad, ~>}
-import natchez.{Kernel, Span, TraceValue}
+import cats.{Id, ~>}
+import natchez.Span
 
 import scala.concurrent.Future
 
@@ -32,19 +31,8 @@ object HasFuture {
     override def apply[A](fa: Id[A]): Future[A] = Future.successful(fa)
   }
 
-  implicit def kleisliHasFuture[F[_]: HasFuture: Monad]: HasFuture[Kleisli[F, Span[F], *]] =
+  implicit def kleisliHasFuture[F[_]](implicit HF: HasFuture[F], span: Span[F]): HasFuture[Kleisli[F, Span[F], *]] =
     new HasFuture[Kleisli[F, Span[F], *]] {
-      override def apply[A](fa: Kleisli[F, Span[F], A]): Future[A] = {
-        val dummySpan: Span[F] =
-          new Span[F] {
-            val kernel                             = Kernel(Map.empty).pure[F]
-            def put(fields: (String, TraceValue)*) = Applicative[F].unit
-            def span(name: String)                 = Applicative[Resource[F, *]].pure(this)
-            def traceId                            = Applicative[F].pure(None)
-            def traceUri                           = Applicative[F].pure(None)
-            def spanId                             = Applicative[F].pure(None)
-          }
-        fa.run(dummySpan).unsafeToFuture()
-      }
+      override def apply[A](fa: Kleisli[F, Span[F], A]): Future[A] = HF.unsafeToFuture(fa.run(span))
     }
 }

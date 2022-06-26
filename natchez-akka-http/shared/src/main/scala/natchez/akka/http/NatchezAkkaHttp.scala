@@ -9,6 +9,7 @@ import cats.effect.unsafe.IORuntime
 import cats.effect.{Async, IO, Sync}
 import cats.syntax.all.*
 import natchez.*
+import natchez.akka.http.AkkaRequest.toKernel
 import natchez.akka.http.HasFuture.HasFutureOps
 
 object NatchezAkkaHttp {
@@ -48,15 +49,4 @@ object NatchezAkkaHttp {
 
   private def addResponseFields[F[_]: Trace](res: HttpResponse): F[Unit] =
     Trace[F].put(Tags.http.status_code(res.status.intValue().toString))
-
-  private def toKernel(request: HttpRequest): Kernel = {
-    val headers           = request.headers
-    val traceId           = "X-Natchez-Trace-Id"
-    val parentSpanId      = "X-Natchez-Parent-Span-Id"
-    val maybeTraceId      =
-      headers.find(_.lowercaseName() == traceId.toLowerCase).map(header => (traceId, header.value()))
-    val maybeParentSpanId =
-      headers.find(_.lowercaseName() == parentSpanId.toLowerCase).map(header => (parentSpanId, header.value()))
-    Kernel((maybeTraceId.toList ++ maybeParentSpanId.toList).toMap)
-  }
 }

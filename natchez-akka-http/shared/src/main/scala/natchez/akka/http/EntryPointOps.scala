@@ -1,12 +1,12 @@
 package natchez.akka.http
 
-import akka.http.scaladsl.model.HttpRequest
 import akka.http.scaladsl.server.Route
 import cats.data.Kleisli
 import cats.effect.Async
 import cats.syntax.all.*
+import natchez.akka.http.AkkaRequest.toKernel
 import natchez.akka.http.HasFuture.HasFutureOps
-import natchez.{EntryPoint, Kernel, Span}
+import natchez.{EntryPoint, Span}
 
 trait EntryPointOps[F[_]] {
 
@@ -19,17 +19,6 @@ trait EntryPointOps[F[_]] {
     .continueOrElseRoot(name = request.uri.path.toString(), kernel = kernel)
     .use(span => routes.run(span).flatMap(route => A.fromFuture(A.delay(route(requestContext)))))
     .unsafeToFuture()
-  }
-
-  private def toKernel(request: HttpRequest): Kernel = {
-    val headers           = request.headers
-    val traceId           = "X-Natchez-Trace-Id"
-    val parentSpanId      = "X-Natchez-Parent-Span-Id"
-    val maybeTraceId      =
-      headers.find(_.lowercaseName() == traceId.toLowerCase).map(header => (traceId, header.value()))
-    val maybeParentSpanId =
-      headers.find(_.lowercaseName() == parentSpanId.toLowerCase).map(header => (parentSpanId, header.value()))
-    Kernel((maybeTraceId.toList ++ maybeParentSpanId.toList).toMap)
   }
 }
 

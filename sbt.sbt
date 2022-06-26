@@ -1,7 +1,7 @@
-addCommandAlias("fix", "; scalafmtAll; scalafmtSbt ; all compile:scalafix test:scalafix it:scalafix")
+addCommandAlias("fix", "; all compile:scalafix test:scalafix it:scalafix; scalafmtAll; scalafmtSbt")
 addCommandAlias(
   "fixCheck",
-  "; scalafmtCheckAll; scalafmtSbtCheck ; compile:scalafix --check ; test:scalafix --check ; it:scalafix --check",
+  "; compile:scalafix --check ; test:scalafix --check ; it:scalafix --check; scalafmtCheckAll; scalafmtSbtCheck",
 )
 addCommandAlias(
   "up2date",
@@ -18,6 +18,7 @@ IntegrationTest / parallelExecution := false
 
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports"   % "0.6.0"
 ThisBuild / scalafixDependencies += "org.typelevel"        %% "typelevel-scalafix" % "0.1.4"
+ThisBuild / scalafixScalaBinaryVersion                     := (if (tlIsScala3.value) "3.1" else "2.13")
 ThisBuild / scalaVersion                                   := "2.13.8"
 ThisBuild / semanticdbEnabled                              := true
 ThisBuild / semanticdbVersion                              := scalafixSemanticdb.revision
