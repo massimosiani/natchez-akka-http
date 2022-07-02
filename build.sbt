@@ -1,4 +1,8 @@
-ThisBuild / tlBaseVersion := "0.1"
+import laika.ast.Path.Root
+import laika.ast.Styles
+import laika.helium.config.{HeliumIcon, IconLink}
+
+ThisBuild / tlBaseVersion := "0.2"
 
 ThisBuild / organization            := "io.github.massimosiani"
 ThisBuild / organizationName        := "Massimo Siani"
@@ -29,6 +33,38 @@ lazy val core = crossProject(JVMPlatform)
     libraryDependencies ++= Seq(
       "com.typesafe.akka" %% "akka-http"    % "10.2.9" % Optional,
       "org.tpolecat"     %%% "natchez-core" % "0.1.6",
+    ),
+  )
+
+lazy val docs = project
+  .in(file("site"))
+  .enablePlugins(TypelevelSitePlugin)
+  .settings(
+    laikaConfig ~= { _.withRawContent },
+    tlSiteHeliumConfig    := tlSiteHeliumConfig
+      .value
+      .site
+      .topNavigationBar(
+        homeLink = IconLink.internal(Root / "index.md", HeliumIcon.home),
+        navLinks = tlSiteApiUrl.value.toList.map { url =>
+          IconLink.external(
+            url.toString,
+            HeliumIcon.api,
+            options = Styles("svg-link"),
+          )
+        } ++ List(
+          IconLink.external(
+            scmInfo.value.fold("https://github.com/massimosiani")(_.browseUrl.toString),
+            HeliumIcon.github,
+            options = Styles("svg-link"),
+          )
+        ),
+      ),
+    tlSiteApiPackage      := Some("natchez.akka.http"),
+    tlSiteRelatedProjects := Seq(
+      "akka-http" -> url("https://doc.akka.io/docs/akka-http/current/index.html"),
+      "natchez"   -> url("https://github.com/tpolecat/natchez"),
+      "tapir"     -> url("https://tapir.softwaremill.com/en/latest/"),
     ),
   )
 

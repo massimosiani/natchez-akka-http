@@ -4,13 +4,13 @@ import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import akka.http.scaladsl.server.RouteResult.{Complete, Rejected}
 import akka.http.scaladsl.server.{RequestContext, Route}
 import cats.effect.kernel.Outcome
+import cats.effect.std.Dispatcher
 import cats.effect.syntax.all.*
 import cats.effect.unsafe.IORuntime
 import cats.effect.{Async, IO, Sync}
 import cats.syntax.all.*
 import natchez.*
 import natchez.akka.http.AkkaRequest.toKernel
-import natchez.akka.http.HasFuture.HasFutureOps
 
 object NatchezAkkaHttp {
 
@@ -24,8 +24,8 @@ object NatchezAkkaHttp {
         .unsafeToFuture()
   }
 
-  def server[F[_]: Async: HasFuture: Trace](routes: F[Route]): F[Route] = Sync[F].delay {
-    (requestContext: RequestContext) => routes.flatMap(route => add(route, requestContext)).unsafeToFuture()
+  def server[F[_]: Async: Trace](routes: F[Route])(implicit D: Dispatcher[F]): F[Route] = Sync[F].delay {
+    (requestContext: RequestContext) => D.unsafeToFuture(routes.flatMap(route => add(route, requestContext)))
   }
 
   private def add[F[_]: Async: Trace](route: Route, requestContext: RequestContext) =
