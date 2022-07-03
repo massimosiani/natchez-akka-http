@@ -8,7 +8,7 @@ Only a server middleware has been implemented so far.
 
 ## Plain Akka Http
 If you only have the routes, then follow the example in the
-[vanilla akka http example](https://github.com/massimosiani/natchez-akka-http/tree/main/examples/vanilla).
+[vanilla akka http example](https://github.com/massimosiani/natchez-akka-http/tree/main/examples/vanilla-akka).
 
 If the request contains a kernel, the entry point will create a continuation,
 otherwise a root span will be created.
