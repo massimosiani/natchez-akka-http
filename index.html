@@ -94,7 +94,7 @@
     <main class="content">
 
         <h1 id="natchez-akka-http" class="title">natchez-akka-http</h1>
-        <p>A tiny integration library for Natchez and Akka Http.</p>
+        <p>An integration library for Natchez and Akka Http.</p>
         <p>Only a server middleware has been implemented so far.</p>
         
         <h2 id="i-have-some-legacy-route" class="section">I have some legacy Route<a class="anchor-link right" href="#i-have-some-legacy-route"><i class="icofont-laika">&#xef71;</i></a></h2>
@@ -118,6 +118,7 @@
         <h3 id="example-tapir" class="section">Example: tapir<a class="anchor-link right" href="#example-tapir"><i class="icofont-laika">&#xef71;</i></a></h3>
         <p>The main idea is writing all services forgetting about <code>Future</code>, and mapping the <code>IO</code> to <code>Future</code> at the
         very end.</p>
+        <p>A full, working example can be found in the <a href="https://github.com/massimosiani/natchez-akka-http/tree/main/examples/tapir">tapir example</a> module. Run <code>sbt tapirExampleJVM/run</code>, go to <code>localhost:8080</code> and look at the spans on your console.</p>
         <pre><code class="nohighlight"><span class="keyword">import</span><span> </span><span class="identifier">akka</span><span>.</span><span class="identifier">http</span><span>.</span><span class="identifier">scaladsl</span><span>.</span><span class="identifier">server</span><span>.</span><span class="type-name">Route</span><span>
 </span><span class="keyword">import</span><span> </span><span class="identifier">cats</span><span>.~&gt;
 </span><span class="keyword">import</span><span> </span><span class="identifier">cats</span><span>.</span><span class="identifier">data</span><span>.</span><span class="type-name">Kleisli</span><span>
@@ -132,9 +133,10 @@
 
 </span><span class="keyword">val</span><span> </span><span class="identifier">entryPoint</span><span>: </span><span class="type-name">EntryPoint</span><span>[</span><span class="type-name">IO</span><span>] = ???
 
-</span><span class="comment">// tapir endpoints
+</span><span class="comment">// tapir endpoint
 </span><span class="keyword">val</span><span> </span><span class="identifier">helloEndpoint</span><span>: </span><span class="type-name">PublicEndpoint</span><span>[</span><span class="type-name">Unit</span><span>, </span><span class="type-name">Unit</span><span>, </span><span class="type-name">String</span><span>, </span><span class="type-name">Any</span><span>] = </span><span class="identifier">endpoint</span><span>.</span><span class="identifier">out</span><span>(</span><span class="identifier">stringBody</span><span>)
-</span><span class="keyword">def</span><span> </span><span class="declaration-name">helloLogic</span><span>: </span><span class="type-name">IO</span><span>[</span><span class="type-name">String</span><span>] = </span><span class="type-name">IO</span><span>(</span><span class="string-literal">&quot;Hello!&quot;</span><span>)
+</span><span class="comment">// this will show a child span for the http request
+</span><span class="keyword">def</span><span> </span><span class="declaration-name">helloLogic</span><span>(</span><span class="keyword">implicit</span><span> </span><span class="identifier">trace</span><span>: </span><span class="type-name">Trace</span><span>[</span><span class="type-name">IO</span><span>]): </span><span class="type-name">IO</span><span>[</span><span class="type-name">String</span><span>] = </span><span class="identifier">trace</span><span>.</span><span class="identifier">span</span><span>(</span><span class="string-literal">&quot;hello&quot;</span><span>)(</span><span class="type-name">IO</span><span>(</span><span class="string-literal">&quot;Hello!&quot;</span><span>))
 
 </span><span class="comment">// for tapir-cats integration
 </span><span class="keyword">implicit</span><span> </span><span class="keyword">val</span><span> </span><span class="identifier">fromFuture</span><span>: (</span><span class="type-name">Future</span><span> ~&gt; </span><span class="type-name">IO</span><span>) = </span><span class="keyword">new</span><span> (</span><span class="type-name">Future</span><span> ~&gt; </span><span class="type-name">IO</span><span>) {
@@ -150,7 +152,7 @@
   </span><span class="type-name">Trace</span><span>.</span><span class="identifier">ioTrace</span><span>(</span><span class="identifier">span</span><span>).</span><span class="identifier">flatMap</span><span> { </span><span class="keyword">implicit</span><span> </span><span class="identifier">t</span><span> =&gt;
     </span><span class="keyword">val</span><span> </span><span class="identifier">helloRoute</span><span>: </span><span class="type-name">Route</span><span> = </span><span class="type-name">AkkaHttpServerInterpreter</span><span>().</span><span class="identifier">toRoute</span><span>(
       </span><span class="identifier">helloEndpoint</span><span>
-        .</span><span class="identifier">serverLogicSuccess</span><span>(</span><span class="identifier">helloLogic</span><span>)
+        .</span><span class="identifier">serverLogicSuccess</span><span>(</span><span class="identifier">_</span><span> =&gt; </span><span class="identifier">helloLogic</span><span>)
         .</span><span class="identifier">imapK</span><span>(</span><span class="identifier">toFuture</span><span>)(</span><span class="identifier">fromFuture</span><span>)  </span><span class="comment">// converting to Future after the Trace constraint has been satisfied
 </span><span>    )
     </span><span class="type-name">NatchezAkkaHttp</span><span>.</span><span class="identifier">server</span><span>(</span><span class="type-name">IO</span><span>.</span><span class="identifier">delay</span><span>(</span><span class="identifier">helloRoute</span><span>))
