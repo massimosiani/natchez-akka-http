@@ -94,8 +94,8 @@ lazy val exampleVanillaAkka = crossProject(JVMPlatform)
   .settings(
     name := "vanilla akka http example",
     libraryDependencies ++= Seq(
-      "com.typesafe.akka"       %% "akka-actor"       % "2.6.9",
-      "com.typesafe.akka"       %% "akka-stream"      % "2.6.9",
+      "com.typesafe.akka"       %% "akka-actor"       % "2.6.19",
+      "com.typesafe.akka"       %% "akka-stream"      % "2.6.19",
       "com.typesafe.akka"       %% "akka-http"        % "10.2.9",
       "org.apache.logging.log4j" % "log4j-api"        % "2.18.0",
       "org.apache.logging.log4j" % "log4j-core"       % "2.18.0",
