@@ -28,49 +28,34 @@ build the corresponding services with a `Trace` constraint in scope.
 The main idea is writing all services forgetting about `Future`, and mapping the `IO` to `Future` at the
 very end.
 
-A full, working example can be found in the [tapir example](https://github.com/massimosiani/natchez-akka-http/tree/main/examples/tapir) module. Run `sbt tapirExampleJVM/run`, go to `localhost:8080` and look at the spans on your console.
+A full, working example can be found in the [tapir example](https://github.com/massimosiani/natchez-akka-http/tree/main/examples/tapir) module. Run `sbt tapirExampleJVM/run`, go to `localhost:8080`, then your console will look like the following
 
-```scala
-import akka.http.scaladsl.server.Route
-import cats.~>
-import cats.data.Kleisli
-import cats.effect.IO
-import cats.effect.unsafe.implicits.global
-import natchez.akka.http.NatchezAkkaHttp
-import natchez.akka.http.entrypoint.toEntryPointOps
-import natchez.{EntryPoint, Span, Trace}
-import sttp.tapir.*
-import sttp.tapir.integ.cats.syntax.*
-import sttp.tapir.server.akkahttp.AkkaHttpServerInterpreter
-
-val entryPoint: EntryPoint[IO] = ???
-
-// tapir endpoint
-val helloEndpoint: PublicEndpoint[Unit, Unit, String, Any] = endpoint.out(stringBody)
-// this will show a child span for the http request
-def helloLogic(implicit trace: Trace[IO]): IO[String] = trace.span("hello")(IO("Hello!"))
-
-// for tapir-cats integration
-implicit val fromFuture: (Future ~> IO) = new (Future ~> IO) {
-  override def apply[A](fa: Future[A]): IO[A] = IO.fromFuture(IO(fa))
+```json
+{
+  "name" : "/",
+  "service" : "example-service",
+  "timestamp" : "2022-07-03T18:09:23.905889985Z",
+  "duration_ms" : 209,
+  "trace.span_id" : "541af16a-d167-483e-a817-cf774337fe27",
+  "trace.parent_id" : null,
+  "trace.trace_id" : "26406382-44de-4c80-b1c9-ac5672164974",
+  "exit.case" : "succeeded",
+  "http.method" : "GET",
+  "http.url" : "http://localhost:8080/",
+  "http.status_code" : "200",
+  "children" : [
+    {
+      "name" : "hello",
+      "service" : "example-service",
+      "timestamp" : "2022-07-03T18:09:24.016872621Z",
+      "duration_ms" : 2,
+      "trace.span_id" : "ec57eca7-52db-4edb-94c0-9f1b10d62ac9",
+      "trace.parent_id" : "26406382-44de-4c80-b1c9-ac5672164974",
+      "trace.trace_id" : "26406382-44de-4c80-b1c9-ac5672164974",
+      "exit.case" : "succeeded",
+      "children" : [
+      ]
+    }
+  ]
 }
-implicit val toFuture: (IO ~> Future) = new (IO ~> Future) {
-  override def apply[A](fa: IO[A]): Future[A] = fa.unsafeToFuture()
-}
-
-// lift the Route in a Kleisli to pass the span around implicitly
-// use the Trace constraint on the services
-val liftedRoutes: Kleisli[IO, Span[IO], Route] = Kleisli { span =>
-  Trace.ioTrace(span).flatMap { implicit t =>
-    val helloRoute: Route = AkkaHttpServerInterpreter().toRoute(
-      helloEndpoint
-        .serverLogicSuccess(_ => helloLogic)
-        .imapK(toFuture)(fromFuture)  // converting to Future after the Trace constraint has been satisfied
-    )
-    NatchezAkkaHttp.server(IO.delay(helloRoute))
-  }
-}
-
-val tracedRoutes: Route = entryPoint.liftT(liftedRoutes)
-// start the server
 ```
