@@ -28,6 +28,8 @@ build the corresponding services with a `Trace` constraint in scope.
 The main idea is writing all services forgetting about `Future`, and mapping the `IO` to `Future` at the
 very end.
 
+A full, working example can be found in the [tapir example](https://github.com/massimosiani/natchez-akka-http/tree/main/examples/tapir) module. Run `sbt tapirExampleJVM/run`, go to `localhost:8080` and look at the spans on your console.
+
 ```scala
 import akka.http.scaladsl.server.Route
 import cats.~>
@@ -62,7 +64,7 @@ val liftedRoutes: Kleisli[IO, Span[IO], Route] = Kleisli { span =>
   Trace.ioTrace(span).flatMap { implicit t =>
     val helloRoute: Route = AkkaHttpServerInterpreter().toRoute(
       helloEndpoint
-        .serverLogicSuccess(helloLogic)
+        .serverLogicSuccess(_ => helloLogic)
         .imapK(toFuture)(fromFuture)  // converting to Future after the Trace constraint has been satisfied
     )
     NatchezAkkaHttp.server(IO.delay(helloRoute))

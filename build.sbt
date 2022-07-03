@@ -23,7 +23,7 @@ ThisBuild / scalaVersion       := Scala213 // the default Scala
 
 ThisBuild / scalacOptions ++= (if (tlIsScala3.value) Seq() else Seq("-language:implicitConversions", "-Xsource:3"))
 
-lazy val root = tlCrossRootProject.aggregate(core, tests)
+lazy val root = tlCrossRootProject.aggregate(core, tests, tapirExample)
 
 lazy val core = crossProject(JVMPlatform)
   .in(file("natchez-akka-http"))
@@ -65,6 +65,25 @@ lazy val docs = project
       "akka-http" -> url("https://doc.akka.io/docs/akka-http/current/index.html"),
       "natchez"   -> url("https://github.com/tpolecat/natchez"),
       "tapir"     -> url("https://tapir.softwaremill.com/en/latest/"),
+    ),
+  )
+
+lazy val tapirExample = crossProject(JVMPlatform)
+  .in(file("examples/tapir"))
+  .enablePlugins(NoPublishPlugin)
+  .dependsOn(core)
+  .settings(
+    name := "tapir example",
+    libraryDependencies ++= Seq(
+      "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server" % "1.0.1",
+      "com.softwaremill.sttp.tapir" %% "tapir-core"             % "1.0.1",
+      "com.softwaremill.sttp.tapir" %% "tapir-cats"             % "1.0.1",
+      "org.apache.logging.log4j"     % "log4j-api"              % "2.18.0",
+      "org.apache.logging.log4j"     % "log4j-core"             % "2.18.0",
+      "org.apache.logging.log4j"     % "log4j-slf4j-impl"       % "2.18.0",
+      "org.tpolecat"                %% "natchez-log"            % "0.1.6",
+      "org.typelevel"               %% "cats-effect"            % "3.3.13",
+      "org.typelevel"               %% "log4cats-slf4j"         % "2.3.2",
     ),
   )
 
