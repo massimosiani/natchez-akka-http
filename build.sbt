@@ -23,7 +23,7 @@ ThisBuild / scalaVersion       := Scala213 // the default Scala
 
 ThisBuild / scalacOptions ++= (if (tlIsScala3.value) Seq() else Seq("-language:implicitConversions", "-Xsource:3"))
 
-lazy val root = tlCrossRootProject.aggregate(core, tests, tapirExample)
+lazy val root = tlCrossRootProject.aggregate(core, exampleTapir, exampleVanillaAkka, tests)
 
 lazy val core = crossProject(JVMPlatform)
   .in(file("natchez-akka-http"))
@@ -68,22 +68,41 @@ lazy val docs = project
     ),
   )
 
-lazy val tapirExample = crossProject(JVMPlatform)
+lazy val exampleTapir = crossProject(JVMPlatform)
   .in(file("examples/tapir"))
   .enablePlugins(NoPublishPlugin)
   .dependsOn(core)
   .settings(
     name := "tapir example",
     libraryDependencies ++= Seq(
-      "com.softwaremill.sttp.tapir" %% "tapir-akka-http-server" % "1.0.1",
-      "com.softwaremill.sttp.tapir" %% "tapir-core"             % "1.0.1",
-      "com.softwaremill.sttp.tapir" %% "tapir-cats"             % "1.0.1",
-      "org.apache.logging.log4j"     % "log4j-api"              % "2.18.0",
-      "org.apache.logging.log4j"     % "log4j-core"             % "2.18.0",
-      "org.apache.logging.log4j"     % "log4j-slf4j-impl"       % "2.18.0",
-      "org.tpolecat"                %% "natchez-log"            % "0.1.6",
-      "org.typelevel"               %% "cats-effect"            % "3.3.13",
-      "org.typelevel"               %% "log4cats-slf4j"         % "2.3.2",
+      "com.softwaremill.sttp.tapir" %%% "tapir-akka-http-server" % "1.0.1",
+      "com.softwaremill.sttp.tapir" %%% "tapir-core"             % "1.0.1",
+      "com.softwaremill.sttp.tapir" %%% "tapir-cats"             % "1.0.1",
+      "org.apache.logging.log4j"      % "log4j-api"              % "2.18.0",
+      "org.apache.logging.log4j"      % "log4j-core"             % "2.18.0",
+      "org.apache.logging.log4j"      % "log4j-slf4j-impl"       % "2.18.0",
+      "org.tpolecat"                %%% "natchez-log"            % "0.1.6",
+      "org.typelevel"               %%% "cats-effect"            % "3.3.13",
+      "org.typelevel"               %%% "log4cats-slf4j"         % "2.3.2",
+    ),
+  )
+
+lazy val exampleVanillaAkka = crossProject(JVMPlatform)
+  .in(file("examples/vanilla-akka"))
+  .enablePlugins(NoPublishPlugin)
+  .dependsOn(core)
+  .settings(
+    name := "vanilla akka http example",
+    libraryDependencies ++= Seq(
+      "com.typesafe.akka"       %% "akka-actor"       % "2.6.9",
+      "com.typesafe.akka"       %% "akka-stream"      % "2.6.9",
+      "com.typesafe.akka"       %% "akka-http"        % "10.2.9",
+      "org.apache.logging.log4j" % "log4j-api"        % "2.18.0",
+      "org.apache.logging.log4j" % "log4j-core"       % "2.18.0",
+      "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.18.0",
+      "org.tpolecat"           %%% "natchez-log"      % "0.1.6",
+      "org.typelevel"          %%% "cats-effect"      % "3.3.13",
+      "org.typelevel"          %%% "log4cats-slf4j"   % "2.3.2",
     ),
   )
 
