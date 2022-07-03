@@ -1,6 +1,6 @@
 # natchez-akka-http
 
-A tiny integration library for Natchez and Akka Http.
+An integration library for Natchez and Akka Http.
 
 Only a server middleware has been implemented so far.
 
@@ -43,9 +43,10 @@ import sttp.tapir.server.akkahttp.AkkaHttpServerInterpreter
 
 val entryPoint: EntryPoint[IO] = ???
 
-// tapir endpoints
+// tapir endpoint
 val helloEndpoint: PublicEndpoint[Unit, Unit, String, Any] = endpoint.out(stringBody)
-def helloLogic: IO[String] = IO("Hello!")
+// this will show a child span for the http request
+def helloLogic(implicit trace: Trace[IO]): IO[String] = trace.span("hello")(IO("Hello!"))
 
 // for tapir-cats integration
 implicit val fromFuture: (Future ~> IO) = new (Future ~> IO) {
