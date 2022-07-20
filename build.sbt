@@ -75,15 +75,15 @@ lazy val exampleTapir = crossProject(JVMPlatform)
   .settings(
     name := "tapir example",
     libraryDependencies ++= Seq(
-      "com.softwaremill.sttp.tapir" %%% "tapir-akka-http-server" % "1.0.1",
-      "com.softwaremill.sttp.tapir" %%% "tapir-core"             % "1.0.1",
-      "com.softwaremill.sttp.tapir" %%% "tapir-cats"             % "1.0.1",
+      "com.softwaremill.sttp.tapir" %%% "tapir-akka-http-server" % "1.0.2",
+      "com.softwaremill.sttp.tapir" %%% "tapir-core"             % "1.0.2",
+      "com.softwaremill.sttp.tapir" %%% "tapir-cats"             % "1.0.2",
       "org.apache.logging.log4j"      % "log4j-api"              % "2.18.0",
       "org.apache.logging.log4j"      % "log4j-core"             % "2.18.0",
       "org.apache.logging.log4j"      % "log4j-slf4j-impl"       % "2.18.0",
       "org.tpolecat"                %%% "natchez-log"            % "0.1.6",
-      "org.typelevel"               %%% "cats-effect"            % "3.3.13",
-      "org.typelevel"               %%% "log4cats-slf4j"         % "2.3.2",
+      "org.typelevel"               %%% "cats-effect"            % "3.3.14",
+      "org.typelevel"               %%% "log4cats-slf4j"         % "2.4.0",
     ),
   )
 
@@ -101,8 +101,8 @@ lazy val exampleVanillaAkka = crossProject(JVMPlatform)
       "org.apache.logging.log4j" % "log4j-core"       % "2.18.0",
       "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.18.0",
       "org.tpolecat"           %%% "natchez-log"      % "0.1.6",
-      "org.typelevel"          %%% "cats-effect"      % "3.3.13",
-      "org.typelevel"          %%% "log4cats-slf4j"   % "2.3.2",
+      "org.typelevel"          %%% "cats-effect"      % "3.3.14",
+      "org.typelevel"          %%% "log4cats-slf4j"   % "2.4.0",
     ),
   )
 
