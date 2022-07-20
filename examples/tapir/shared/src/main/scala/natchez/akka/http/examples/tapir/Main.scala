@@ -24,10 +24,10 @@ import cats.effect.std.Dispatcher
 import cats.effect.unsafe.implicits.global
 import cats.effect.{IO, IOApp, Resource}
 import cats.~>
-import natchez.akka.http.NatchezAkkaHttp
+import natchez.akka.http.AkkaRoute
 import natchez.akka.http.entrypoint.toEntryPointOps
 import natchez.log.Log
-import natchez.{EntryPoint, Span, Trace}
+import natchez.{EntryPoint, Span}
 import org.typelevel.log4cats.Logger
 import org.typelevel.log4cats.slf4j.Slf4jLogger
 import sttp.tapir.integ.cats.syntax.*
@@ -61,14 +61,10 @@ object Main extends IOApp.Simple {
 
       // lift the Route in a Kleisli to pass the span around implicitly
       // use the Trace constraint on the services
-      val liftedRoutes: Kleisli[IO, Span[IO], Route] = Kleisli { span =>
-        Trace.ioTrace(span).flatMap { implicit t =>
-          IO.executionContext.flatMap { implicit ec =>
-            val helloService      = new HelloService[IO]
-            val helloRoute: Route =
-              AkkaHttpServerInterpreter().toRoute(helloService.helloEndpoint.imapK(toFuture)(fromFuture))
-            NatchezAkkaHttp.server(IO.delay(helloRoute))
-          }
+      val liftedRoutes: Kleisli[IO, Span[IO], Route] = AkkaRoute.liftedRouteIO { implicit t =>
+        IO.executionContext.map { implicit ec =>
+          val helloService = new HelloService[IO]
+          AkkaHttpServerInterpreter().toRoute(helloService.helloEndpoint.imapK(toFuture)(fromFuture))
         }
       }
 
