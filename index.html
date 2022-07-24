@@ -83,6 +83,7 @@
         <p class="header"><a href="#">natchez-akka-http</a></p>
 
         <ul class="nav-list">
+          <li class="level1"><a href="#installation">Installation</a></li>
           <li class="level1"><a href="#plain-akka-http">Plain Akka Http</a></li>
           <li class="level1"><a href="#services-built-with-cats-effect-io-or-tagless-final">Services built with cats effect IO or tagless final</a></li>
           <li class="level2"><a href="#example-tapir">Example: tapir</a></li>
@@ -97,6 +98,10 @@
         <p><a href="https://search.maven.org/search?q=g:%22io.github.massimosiani%22%20AND%20a:%22natchez-akka-http_2.13%22"><img src="https://img.shields.io/maven-central/v/io.github.massimosiani/natchez-akka-http_2.13.svg?label=Maven%20Central" alt="Maven Central"></a></p>
         <p>An integration library for Natchez and Akka Http.</p>
         <p>Only a server middleware has been implemented so far.</p>
+        
+        <h2 id="installation" class="section">Installation<a class="anchor-link right" href="#installation"><i class="icofont-laika">&#xef71;</i></a></h2>
+        <p>Add the following to your <code>build.sbt</code></p>
+        <pre class="keep-together pdf epub"><code class="nohighlight"><span class="identifier">libraryDependencies</span><span> ++= </span><span class="type-name">Seq</span><span>(</span><span class="string-literal">&quot;io.github.massimosiani&quot;</span><span> %% </span><span class="string-literal">&quot;natchez-akka-http&quot;</span><span> % &lt;</span><span class="identifier">version</span><span>&gt;)</span></code></pre>
         
         <h2 id="plain-akka-http" class="section">Plain Akka Http<a class="anchor-link right" href="#plain-akka-http"><i class="icofont-laika">&#xef71;</i></a></h2>
         <p>If you only have the routes, then follow the example in the
