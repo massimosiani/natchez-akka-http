@@ -17,9 +17,14 @@
 package natchez.akka.http
 
 import akka.http.scaladsl.model.HttpRequest
+import akka.http.scaladsl.model.headers.RawHeader
 import natchez.Kernel
 
 object AkkaRequest {
+  private[http] def withKernelHeaders(request: HttpRequest, kernel: Kernel): HttpRequest = request.withHeaders(
+    kernel.toHeaders.map { case (k, v) => RawHeader(k, v) }.toSeq ++ request.headers
+  ) // prioritize request headers over kernel ones
+
   private[http] def toKernel(request: HttpRequest): Kernel = {
     val headers           = request.headers
     val traceId           = "X-Natchez-Trace-Id"

@@ -16,6 +16,8 @@
 
 package natchez.akka.http
 
+import akka.actor.ClassicActorSystemProvider
+import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import akka.http.scaladsl.server.RouteResult.{Complete, Rejected}
 import akka.http.scaladsl.server.{RequestContext, Route}
@@ -28,8 +30,42 @@ import cats.syntax.all.*
 import natchez.*
 import natchez.akka.http.AkkaRequest.toKernel
 
+import scala.concurrent.Future
+
 object NatchezAkkaHttp {
 
+  /** Adds the current span's kernel to the outgoing request, performs the request in a span called
+    * `akka-http-client-request`, and adds the following fields to that span.
+    *   - "client.http.method" -> "GET", "PUT", etc.
+    *   - "client.http.uri" -> request URI
+    *   - "client.http.status_code" -> "200", "403", etc.
+    */
+  def clientSingleRequest(
+      request: HttpRequest
+  )(implicit T: Trace[IO], as: ClassicActorSystemProvider, ioRuntime: IORuntime): Future[HttpResponse] = T
+    .span("akka-http-client-request") {
+      for {
+        kernel    <- T.kernel
+        _         <- T.put("client.http.uri" -> request.uri.path.toString(), "client.http.method" -> request.method.name)
+        sendingReq = AkkaRequest.withKernelHeaders(request, kernel)
+        res       <- IO.fromFuture(IO.delay(Http().singleRequest(sendingReq)))
+        _         <- T.put("client.http.status_code" -> res.status.intValue().toString)
+      } yield res
+    }
+    .unsafeToFuture()
+
+  /** Does not allow to use the current span beyond the http layer.
+    *
+    * Adds the following standard fields to the current span:
+    *   - "http.method" -> "GET", "PUT", etc.
+    *   - "http.url" -> request URI (not URL)
+    *   - "http.status_code" -> "200", "403", etc.
+    *   - "error" -> true // only present in case of error
+    *
+    * In addition the following non-standard fields are added in case of error:
+    *   - "error.message" -> Exception message
+    *   - "cancelled" -> true // only present in case of cancellation
+    */
   def legacyServer(entryPoint: EntryPoint[IO])(routes: Route)(implicit ioRuntime: IORuntime): Route = {
     requestContext =>
       val request = requestContext.request
@@ -40,6 +76,16 @@ object NatchezAkkaHttp {
         .unsafeToFuture()
   }
 
+  /** Adds the following standard fields to the current span:
+    *   - "http.method" -> "GET", "PUT", etc.
+    *   - "http.url" -> request URI (not URL)
+    *   - "http.status_code" -> "200", "403", etc.
+    *   - "error" -> true // only present in case of error
+    *
+    * In addition the following non-standard fields are added in case of error:
+    *   - "error.message" -> Exception message
+    *   - "cancelled" -> true // only present in case of cancellation
+    */
   def server[F[_]: Async: Trace](routes: F[Route])(implicit D: Dispatcher[F]): F[Route] = Sync[F].delay {
     (requestContext: RequestContext) => D.unsafeToFuture(routes.flatMap(route => add(route, requestContext)))
   }

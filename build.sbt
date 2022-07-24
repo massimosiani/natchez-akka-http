@@ -32,6 +32,7 @@ lazy val core = crossProject(JVMPlatform)
     name        := "natchez-akka-http",
     description := "Integration for Natchez and Akka Http",
     libraryDependencies ++= Seq(
+      "com.typesafe.akka" %% "akka-actor"   % akka     % Optional,
       "com.typesafe.akka" %% "akka-http"    % akkaHttp % Optional,
       "org.tpolecat"     %%% "natchez-core" % natchez,
     ),

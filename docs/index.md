@@ -4,7 +4,7 @@
 
 An integration library for Natchez and Akka Http.
 
-Only a server middleware has been implemented so far.
+Inspired by [natchez-http4s](https://github.com/tpolecat/natchez-http4s).
 
 ## Installation
 
@@ -13,14 +13,17 @@ Add the following to your `build.sbt`
 libraryDependencies ++= Seq("io.github.massimosiani" %% "natchez-akka-http" % <version>)
 ```
 
-## Plain Akka Http
+## Server side
+
+### Plain Akka Http
 If you only have the routes, then follow the example in the
-[vanilla akka http example](https://github.com/massimosiani/natchez-akka-http/tree/main/examples/vanilla-akka).
+[VanillaAkkaHttpRoute class](https://github.com/massimosiani/natchez-akka-http/tree/main/examples/vanilla-akka).
 
 If the request contains a kernel, the entry point will create a continuation,
 otherwise a root span will be created.
 
-Run `sbt exampleVanillaAkkaJVM/run`, open a browser and go to `localhost:8080/hello`.
+Run `sbt "exampleVanillaAkkaJVM/runMain natchez.akka.http.examples.vanilla.VanillaAkkaHttpRoute"`,
+open a browser and go to `localhost:8080/hello`.
 You should see something similar in your console.
 Notice that the `children` section will always be empty.
 
@@ -42,14 +45,14 @@ Notice that the `children` section will always be empty.
 }
 ```
 
-## Services built with cats effect IO or tagless final
+### Services built with cats effect IO or tagless final
 If you can build your services using cats effect `IO` or tagless final style,
 e.g. using [tapir](https://tapir.softwaremill.com/en/latest/),
 build the corresponding services with a `Trace` constraint in scope.
 
 In this case, the `children` section will be filled.
 
-### Example: tapir
+#### Example: tapir
 The main idea is writing all services forgetting about `Future`, and mapping the `IO` to `Future` at the
 very end.
 
@@ -81,6 +84,27 @@ A full, working example can be found in the [tapir example](https://github.com/m
       "children" : [
       ]
     }
+  ]
+}
+```
+
+## Client side
+
+For an example, see [HttpClientSingleRequest class](https://github.com/massimosiani/natchez-akka-http/tree/main/examples/vanilla-akka).
+If you run `sbt "exampleVanillaAkkaJVM/runMain natchez.akka.http.examples.vanilla.HttpClientSingleRequest"`,
+you should see something similar in your console:
+
+```json
+{
+  "name" : "example-http-client-single-request-root-span",
+  "service" : "example-http-client-single-request",
+  "timestamp" : "2022-07-24T17:07:51.490422799Z",
+  "duration_ms" : 6,
+  "trace.span_id" : "ce1973e4-eed5-4e38-9201-caae09ea7b1d",
+  "trace.parent_id" : null,
+  "trace.trace_id" : "b10a567d-0d80-4ddd-b70d-4e7f00146256",
+  "exit.case" : "succeeded",
+  "children" : [
   ]
 }
 ```
