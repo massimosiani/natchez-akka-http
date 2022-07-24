@@ -1,6 +1,7 @@
 import laika.ast.Path.Root
 import laika.ast.Styles
 import laika.helium.config.{HeliumIcon, IconLink}
+import Dependencies.versions._
 
 ThisBuild / tlBaseVersion := "0.2"
 
@@ -31,8 +32,8 @@ lazy val core = crossProject(JVMPlatform)
     name        := "natchez-akka-http",
     description := "Integration for Natchez and Akka Http",
     libraryDependencies ++= Seq(
-      "com.typesafe.akka" %% "akka-http"    % "10.2.9" % Optional,
-      "org.tpolecat"     %%% "natchez-core" % "0.1.6",
+      "com.typesafe.akka" %% "akka-http"    % akkaHttp % Optional,
+      "org.tpolecat"     %%% "natchez-core" % natchez,
     ),
   )
 
@@ -75,15 +76,15 @@ lazy val exampleTapir = crossProject(JVMPlatform)
   .settings(
     name := "tapir example",
     libraryDependencies ++= Seq(
-      "com.softwaremill.sttp.tapir" %%% "tapir-akka-http-server" % "1.0.2",
-      "com.softwaremill.sttp.tapir" %%% "tapir-core"             % "1.0.2",
-      "com.softwaremill.sttp.tapir" %%% "tapir-cats"             % "1.0.2",
-      "org.apache.logging.log4j"      % "log4j-api"              % "2.18.0",
-      "org.apache.logging.log4j"      % "log4j-core"             % "2.18.0",
-      "org.apache.logging.log4j"      % "log4j-slf4j-impl"       % "2.18.0",
-      "org.tpolecat"                %%% "natchez-log"            % "0.1.6",
-      "org.typelevel"               %%% "cats-effect"            % "3.3.14",
-      "org.typelevel"               %%% "log4cats-slf4j"         % "2.4.0",
+      "com.softwaremill.sttp.tapir" %%% "tapir-akka-http-server" % tapir,
+      "com.softwaremill.sttp.tapir" %%% "tapir-core"             % tapir,
+      "com.softwaremill.sttp.tapir" %%% "tapir-cats"             % tapir,
+      "org.apache.logging.log4j"      % "log4j-api"              % log4j,
+      "org.apache.logging.log4j"      % "log4j-core"             % log4j,
+      "org.apache.logging.log4j"      % "log4j-slf4j-impl"       % log4j,
+      "org.tpolecat"                %%% "natchez-log"            % natchez,
+      "org.typelevel"               %%% "cats-effect"            % catsEffect,
+      "org.typelevel"               %%% "log4cats-slf4j"         % log4cats,
     ),
   )
 
@@ -94,15 +95,15 @@ lazy val exampleVanillaAkka = crossProject(JVMPlatform)
   .settings(
     name := "vanilla akka http example",
     libraryDependencies ++= Seq(
-      "com.typesafe.akka"       %% "akka-actor"       % "2.6.19",
-      "com.typesafe.akka"       %% "akka-stream"      % "2.6.19",
-      "com.typesafe.akka"       %% "akka-http"        % "10.2.9",
-      "org.apache.logging.log4j" % "log4j-api"        % "2.18.0",
-      "org.apache.logging.log4j" % "log4j-core"       % "2.18.0",
-      "org.apache.logging.log4j" % "log4j-slf4j-impl" % "2.18.0",
-      "org.tpolecat"           %%% "natchez-log"      % "0.1.6",
-      "org.typelevel"          %%% "cats-effect"      % "3.3.14",
-      "org.typelevel"          %%% "log4cats-slf4j"   % "2.4.0",
+      "com.typesafe.akka"       %% "akka-actor"       % akka,
+      "com.typesafe.akka"       %% "akka-stream"      % akka,
+      "com.typesafe.akka"       %% "akka-http"        % akkaHttp,
+      "org.apache.logging.log4j" % "log4j-api"        % log4j,
+      "org.apache.logging.log4j" % "log4j-core"       % log4j,
+      "org.apache.logging.log4j" % "log4j-slf4j-impl" % log4j,
+      "org.tpolecat"           %%% "natchez-log"      % natchez,
+      "org.typelevel"          %%% "cats-effect"      % catsEffect,
+      "org.typelevel"          %%% "log4cats-slf4j"   % log4cats,
     ),
   )
 
@@ -112,6 +113,6 @@ lazy val tests = crossProject(JVMPlatform)
   .dependsOn(core)
   .settings(
     name := "tests",
-    libraryDependencies ++= Seq("org.scalacheck" %%% "scalacheck" % "1.16.0", "org.scalameta" %%% "munit" % "0.7.29")
+    libraryDependencies ++= Seq("org.scalacheck" %%% "scalacheck" % scalacheck, "org.scalameta" %%% "munit" % munit)
       .map(_ % Test),
   )
