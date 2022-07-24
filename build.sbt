@@ -12,7 +12,7 @@ ThisBuild / developers              := List(
   tlGitHubDev("massimosiani", "Massimo Siani")
 )
 
-ThisBuild / tlCiHeaderCheck         := false
+ThisBuild / tlCiHeaderCheck         := true
 ThisBuild / tlCiScalafixCheck       := true
 ThisBuild / tlCiScalafmtCheck       := true
 ThisBuild / tlSitePublishBranch     := Some("main")

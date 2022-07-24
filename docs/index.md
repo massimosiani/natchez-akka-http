@@ -6,6 +6,13 @@ An integration library for Natchez and Akka Http.
 
 Only a server middleware has been implemented so far.
 
+## Installation
+
+Add the following to your `build.sbt`
+```scala
+libraryDependencies ++= Seq("io.github.massimosiani" %% "natchez-akka-http" % <version>)
+```
+
 ## Plain Akka Http
 If you only have the routes, then follow the example in the
 [vanilla akka http example](https://github.com/massimosiani/natchez-akka-http/tree/main/examples/vanilla-akka).
