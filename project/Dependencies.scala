@@ -9,6 +9,6 @@ object Dependencies {
     val munit      = "0.7.29"
     val natchez    = "0.1.6"
     val scalacheck = "1.16.0"
-    val tapir      = "1.0.4"
+    val tapir      = "1.0.6"
   }
 }
