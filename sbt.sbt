@@ -17,7 +17,7 @@ Test / turbo                        := true
 IntegrationTest / parallelExecution := false
 
 ThisBuild / scalafixDependencies += "com.github.liancheng" %% "organize-imports"   % "0.6.0"
-ThisBuild / scalafixDependencies += "org.typelevel"        %% "typelevel-scalafix" % "0.1.4"
+ThisBuild / scalafixDependencies += "org.typelevel"        %% "typelevel-scalafix" % "0.1.5"
 ThisBuild / scalafixScalaBinaryVersion                     := (if (tlIsScala3.value) "3.1" else "2.13")
 ThisBuild / semanticdbEnabled                              := true
 ThisBuild / semanticdbVersion                              := scalafixSemanticdb.revision

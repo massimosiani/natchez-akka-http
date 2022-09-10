@@ -19,10 +19,17 @@ ThisBuild / tlSitePublishBranch     := Some("main")
 ThisBuild / tlSonatypeUseLegacyHost := false
 
 val Scala213 = "2.13.8"
-ThisBuild / crossScalaVersions := Seq(Scala213)
+val Scala3   = "3.2.0"
+ThisBuild / crossScalaVersions := Seq(Scala213, Scala3)
 ThisBuild / scalaVersion       := Scala213 // the default Scala
 
-ThisBuild / scalacOptions ++= (if (tlIsScala3.value) Seq() else Seq("-language:implicitConversions", "-Xsource:3"))
+ThisBuild / scalacOptions ++= (if (tlIsScala3.value) Seq("-Ykind-projector:underscores")
+                               else
+                                 Seq(
+                                   "-language:implicitConversions",
+                                   "-P:kind-projector:underscore-placeholders",
+                                   "-Xsource:3",
+                                 ))
 
 lazy val root = tlCrossRootProject.aggregate(core, exampleTapir, exampleVanillaAkka, tests)
 
@@ -33,7 +40,7 @@ lazy val core = crossProject(JVMPlatform)
     description := "Integration for Natchez and Akka Http",
     libraryDependencies ++= Seq(
       "com.typesafe.akka" %% "akka-actor"   % akka     % Optional,
-      "com.typesafe.akka" %% "akka-http"    % akkaHttp % Optional,
+      "com.typesafe.akka" %% "akka-http"    % akkaHttp % Optional cross CrossVersion.for3Use2_13,
       "org.tpolecat"     %%% "natchez-core" % natchez,
     ),
   )
@@ -77,7 +84,7 @@ lazy val exampleTapir = crossProject(JVMPlatform)
   .settings(
     name := "tapir example",
     libraryDependencies ++= Seq(
-      "com.softwaremill.sttp.tapir" %%% "tapir-akka-http-server" % tapir,
+      "com.softwaremill.sttp.tapir" %%% "tapir-akka-http-server" % tapir cross CrossVersion.for3Use2_13,
       "com.softwaremill.sttp.tapir" %%% "tapir-core"             % tapir,
       "com.softwaremill.sttp.tapir" %%% "tapir-cats"             % tapir,
       "org.apache.logging.log4j"      % "log4j-api"              % log4j,
@@ -98,7 +105,7 @@ lazy val exampleVanillaAkka = crossProject(JVMPlatform)
     libraryDependencies ++= Seq(
       "com.typesafe.akka"       %% "akka-actor"       % akka,
       "com.typesafe.akka"       %% "akka-stream"      % akka,
-      "com.typesafe.akka"       %% "akka-http"        % akkaHttp,
+      "com.typesafe.akka"       %% "akka-http"        % akkaHttp cross CrossVersion.for3Use2_13,
       "org.apache.logging.log4j" % "log4j-api"        % log4j,
       "org.apache.logging.log4j" % "log4j-core"       % log4j,
       "org.apache.logging.log4j" % "log4j-slf4j-impl" % log4j,
