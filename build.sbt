@@ -18,7 +18,7 @@ ThisBuild / tlCiScalafmtCheck       := true
 ThisBuild / tlSitePublishBranch     := Some("main")
 ThisBuild / tlSonatypeUseLegacyHost := false
 
-val Scala213 = "2.13.8"
+val Scala213 = "2.13.10"
 ThisBuild / crossScalaVersions := Seq(Scala213)
 ThisBuild / scalaVersion       := Scala213 // the default Scala
 
@@ -27,6 +27,7 @@ ThisBuild / scalacOptions ++= (if (tlIsScala3.value) Seq() else Seq("-language:i
 lazy val root = tlCrossRootProject.aggregate(core, exampleTapir, exampleVanillaAkka, tests)
 
 lazy val core = crossProject(JVMPlatform)
+  .crossType(CrossType.Pure)
   .in(file("natchez-akka-http"))
   .settings(
     name        := "natchez-akka-http",
@@ -71,6 +72,7 @@ lazy val docs = project
   )
 
 lazy val exampleTapir = crossProject(JVMPlatform)
+  .crossType(CrossType.Pure)
   .in(file("examples/tapir"))
   .enablePlugins(NoPublishPlugin)
   .dependsOn(core)
@@ -90,6 +92,7 @@ lazy val exampleTapir = crossProject(JVMPlatform)
   )
 
 lazy val exampleVanillaAkka = crossProject(JVMPlatform)
+  .crossType(CrossType.Pure)
   .in(file("examples/vanilla-akka"))
   .enablePlugins(NoPublishPlugin)
   .dependsOn(core)
@@ -109,6 +112,7 @@ lazy val exampleVanillaAkka = crossProject(JVMPlatform)
   )
 
 lazy val tests = crossProject(JVMPlatform)
+  .crossType(CrossType.Pure)
   .in(file("tests"))
   .enablePlugins(NoPublishPlugin)
   .dependsOn(core)

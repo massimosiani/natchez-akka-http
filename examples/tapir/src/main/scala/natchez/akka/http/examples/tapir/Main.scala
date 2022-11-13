@@ -54,7 +54,7 @@ object Main extends IOApp.Simple {
 
   override def run: IO[Unit] = (for {
     ep <- entryPointR
-    d  <- Dispatcher[IO]
+    d  <- Dispatcher.parallel[IO]
   } yield (ep, d)).use {
     case (entryPoint, dispatcher) =>
       implicit val d = dispatcher
