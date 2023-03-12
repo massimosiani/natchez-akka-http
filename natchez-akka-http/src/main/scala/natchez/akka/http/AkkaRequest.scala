@@ -18,21 +18,23 @@ package natchez.akka.http
 
 import akka.http.scaladsl.model.HttpRequest
 import akka.http.scaladsl.model.headers.RawHeader
+import cats.syntax.eq.*
 import natchez.Kernel
+import org.typelevel.ci.*
 
 object AkkaRequest {
   private[http] def withKernelHeaders(request: HttpRequest, kernel: Kernel): HttpRequest = request.withHeaders(
-    kernel.toHeaders.map { case (k, v) => RawHeader(k, v) }.toSeq ++ request.headers
+    kernel.toHeaders.map { case (k, v) => RawHeader(k.toString, v) }.toSeq ++ request.headers
   ) // prioritize request headers over kernel ones
 
   private[http] def toKernel(request: HttpRequest): Kernel = {
     val headers           = request.headers
-    val traceId           = "X-Natchez-Trace-Id"
-    val parentSpanId      = "X-Natchez-Parent-Span-Id"
+    val traceId           = ci"X-Natchez-Trace-Id"
+    val parentSpanId      = ci"X-Natchez-Parent-Span-Id"
     val maybeTraceId      =
-      headers.find(_.lowercaseName() == traceId.toLowerCase).map(header => (traceId, header.value()))
+      headers.find(h => CIString(h.lowercaseName()) === traceId).map(header => (traceId, header.value()))
     val maybeParentSpanId =
-      headers.find(_.lowercaseName() == parentSpanId.toLowerCase).map(header => (parentSpanId, header.value()))
+      headers.find(h => CIString(h.lowercaseName()) === parentSpanId).map(header => (parentSpanId, header.value()))
     Kernel((maybeTraceId.toList ++ maybeParentSpanId.toList).toMap)
   }
 }
