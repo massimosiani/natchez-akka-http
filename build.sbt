@@ -5,10 +5,10 @@ import Dependencies.versions._
 
 ThisBuild / tlBaseVersion := "0.2"
 
-ThisBuild / organization            := "io.github.massimosiani"
-ThisBuild / organizationName        := "Massimo Siani"
-ThisBuild / licenses                := Seq(License.Apache2)
-ThisBuild / developers              := List(
+ThisBuild / organization     := "io.github.massimosiani"
+ThisBuild / organizationName := "Massimo Siani"
+ThisBuild / licenses         := Seq(License.Apache2)
+ThisBuild / developers       := List(
   tlGitHubDev("massimosiani", "Massimo Siani")
 )
 
@@ -18,7 +18,7 @@ ThisBuild / tlCiScalafmtCheck       := true
 ThisBuild / tlSitePublishBranch     := Some("main")
 ThisBuild / tlSonatypeUseLegacyHost := false
 
-val Scala213 = "2.13.10"
+val Scala213 = "2.13.11"
 ThisBuild / crossScalaVersions := Seq(Scala213)
 ThisBuild / scalaVersion       := Scala213 // the default Scala
 
