@@ -103,8 +103,7 @@ object NatchezAkkaHttp {
           .put(("cancelled", TraceValue.BooleanValue(true)), Tags.error(true))
     }
 
-  private def addErrorFields[F[_]: Trace](e: Throwable): F[Unit] =
-    Trace[F].put(Tags.error(true), "error.message" -> e.getMessage())
+  private def addErrorFields[F[_]: Trace](e: Throwable): F[Unit] = Trace[F].attachError(e)
 
   private def addRequestFields[F[_]: Trace](req: HttpRequest): F[Unit] =
     Trace[F].put(Tags.http.method(req.method.name), Tags.http.url(req.uri.toString()))
