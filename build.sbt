@@ -1,6 +1,6 @@
 import laika.ast.Path.Root
 import laika.ast.Styles
-import laika.helium.config.{HeliumIcon, IconLink}
+import laika.helium.config.{HeliumIcon, IconLink, ThemeNavigationSection, TextLink}
 import Dependencies.versions._
 
 ThisBuild / tlBaseVersion := "0.3"
@@ -12,14 +12,13 @@ ThisBuild / developers       := List(
   tlGitHubDev("massimosiani", "Massimo Siani")
 )
 
-ThisBuild / tlCiHeaderCheck         := true
-ThisBuild / tlCiScalafixCheck       := true
-ThisBuild / tlCiScalafmtCheck       := true
-ThisBuild / tlMimaPreviousVersions  := Set.empty  // TODO: remove after release
-// ThisBuild / tlSiteIsTypelevelProject := false
-ThisBuild / tlSitePublishBranch     := Some("main")
-ThisBuild / tlSonatypeUseLegacyHost := false
-// ThisBuild / tlTypelevelScalafixVersion := "0.1.5"
+ThisBuild / tlCiHeaderCheck          := true
+ThisBuild / tlCiScalafixCheck        := true
+ThisBuild / tlCiScalafmtCheck        := true
+ThisBuild / tlMimaPreviousVersions   := Set.empty // TODO: remove after release
+ThisBuild / tlSiteIsTypelevelProject := None
+ThisBuild / tlSitePublishBranch      := Some("main")
+ThisBuild / tlSonatypeUseLegacyHost  := false
 
 val Scala213 = "2.13.11"
 ThisBuild / crossScalaVersions := Seq(Scala213)
@@ -60,7 +59,7 @@ lazy val docs = project
   .enablePlugins(TypelevelSitePlugin)
   .settings(
     laikaConfig ~= { _.withRawContent },
-    tlSiteHeliumConfig    := tlSiteHeliumConfig
+    tlSiteHelium     := tlSiteHelium
       .value
       .site
       .topNavigationBar(
@@ -78,14 +77,20 @@ lazy val docs = project
             options = Styles("svg-link"),
           )
         ),
+      )
+      .site
+      .mainNavigation(appendLinks =
+        Seq(
+          ThemeNavigationSection(
+            "akka-http",
+            TextLink.external("https://doc.akka.io/docs/akka-http/current/index.html", "akka-http"),
+          ),
+          ThemeNavigationSection("pekko", TextLink.external("https://pekko.apache.org/", "pekko")),
+          ThemeNavigationSection("natchez", TextLink.external("https://github.com/tpolecat/natchez", "natchez")),
+          ThemeNavigationSection("tapir", TextLink.external("https://tapir.softwaremill.com/en/latest/", "tapir")),
+        )
       ),
-    tlSiteApiPackage      := Some("natchez.akka.http"),
-    tlSiteRelatedProjects := Seq(
-      "akka-http" -> url("https://doc.akka.io/docs/akka-http/current/index.html"),
-      "pekko"     -> url("https://pekko.apache.org/"),
-      "natchez"   -> url("https://github.com/tpolecat/natchez"),
-      "tapir"     -> url("https://tapir.softwaremill.com/en/latest/"),
-    ),
+    tlSiteApiPackage := Some("natchez.akka.http"),
   )
 
 lazy val exampleTapir = crossProject(JVMPlatform)
