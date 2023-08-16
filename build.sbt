@@ -1,6 +1,6 @@
 import laika.ast.Path.Root
 import laika.ast.Styles
-import laika.helium.config.{HeliumIcon, IconLink}
+import laika.helium.config.{HeliumIcon, IconLink, ThemeNavigationSection, TextLink}
 import Dependencies.versions._
 
 ThisBuild / tlBaseVersion := "0.3"
@@ -12,11 +12,13 @@ ThisBuild / developers       := List(
   tlGitHubDev("massimosiani", "Massimo Siani")
 )
 
-ThisBuild / tlCiHeaderCheck         := true
-ThisBuild / tlCiScalafixCheck       := true
-ThisBuild / tlCiScalafmtCheck       := true
-ThisBuild / tlSitePublishBranch     := Some("main")
-ThisBuild / tlSonatypeUseLegacyHost := false
+ThisBuild / tlCiHeaderCheck          := true
+ThisBuild / tlCiScalafixCheck        := true
+ThisBuild / tlCiScalafmtCheck        := true
+ThisBuild / tlMimaPreviousVersions   := Set.empty // TODO: remove after release
+ThisBuild / tlSiteIsTypelevelProject := None
+ThisBuild / tlSitePublishBranch      := Some("main")
+ThisBuild / tlSonatypeUseLegacyHost  := false
 
 val Scala213 = "2.13.11"
 ThisBuild / crossScalaVersions := Seq(Scala213)
@@ -24,9 +26,9 @@ ThisBuild / scalaVersion       := Scala213 // the default Scala
 
 ThisBuild / scalacOptions ++= (if (tlIsScala3.value) Seq() else Seq("-language:implicitConversions", "-Xsource:3"))
 
-lazy val root = tlCrossRootProject.aggregate(core, exampleTapir, exampleVanillaAkka, tests)
+lazy val root = tlCrossRootProject.aggregate(natchezAkkaHttp, natchezPekkoHttp, exampleTapir, exampleVanillaAkka, tests)
 
-lazy val core = crossProject(JVMPlatform)
+lazy val natchezAkkaHttp = crossProject(JVMPlatform)
   .crossType(CrossType.Pure)
   .in(file("natchez-akka-http"))
   .settings(
@@ -39,16 +41,29 @@ lazy val core = crossProject(JVMPlatform)
     ),
   )
 
+lazy val natchezPekkoHttp = crossProject(JVMPlatform)
+  .crossType(CrossType.Pure)
+  .in(file("natchez-pekko-http"))
+  .settings(
+    name        := "natchez-pekko-http",
+    description := "Integration for Natchez and Pekko Http",
+    libraryDependencies ++= Seq(
+      "org.apache.pekko" %% "pekko-actor"  % pekko,
+      "org.apache.pekko" %% "pekko-http"   % pekkoHttp,
+      "org.tpolecat"    %%% "natchez-core" % natchez,
+    ),
+  )
+
 lazy val docs = project
   .in(file("site"))
   .enablePlugins(TypelevelSitePlugin)
   .settings(
     laikaConfig ~= { _.withRawContent },
-    tlSiteHeliumConfig    := tlSiteHeliumConfig
+    tlSiteHelium     := tlSiteHelium
       .value
       .site
       .topNavigationBar(
-        homeLink = IconLink.internal(Root / "index.md", HeliumIcon.home),
+        homeLink = IconLink.internal(Root / "natchez-akka-http.md", HeliumIcon.home),
         navLinks = tlSiteApiUrl.value.toList.map { url =>
           IconLink.external(
             url.toString,
@@ -62,20 +77,27 @@ lazy val docs = project
             options = Styles("svg-link"),
           )
         ),
+      )
+      .site
+      .mainNavigation(appendLinks =
+        Seq(
+          ThemeNavigationSection(
+            "akka-http",
+            TextLink.external("https://doc.akka.io/docs/akka-http/current/index.html", "akka-http"),
+          ),
+          ThemeNavigationSection("pekko", TextLink.external("https://pekko.apache.org/", "pekko")),
+          ThemeNavigationSection("natchez", TextLink.external("https://github.com/tpolecat/natchez", "natchez")),
+          ThemeNavigationSection("tapir", TextLink.external("https://tapir.softwaremill.com/en/latest/", "tapir")),
+        )
       ),
-    tlSiteApiPackage      := Some("natchez.akka.http"),
-    tlSiteRelatedProjects := Seq(
-      "akka-http" -> url("https://doc.akka.io/docs/akka-http/current/index.html"),
-      "natchez"   -> url("https://github.com/tpolecat/natchez"),
-      "tapir"     -> url("https://tapir.softwaremill.com/en/latest/"),
-    ),
+    tlSiteApiPackage := Some("natchez.akka.http"),
   )
 
 lazy val exampleTapir = crossProject(JVMPlatform)
   .crossType(CrossType.Pure)
   .in(file("examples/tapir"))
   .enablePlugins(NoPublishPlugin)
-  .dependsOn(core)
+  .dependsOn(natchezAkkaHttp)
   .settings(
     name := "tapir example",
     libraryDependencies ++= Seq(
@@ -95,7 +117,7 @@ lazy val exampleVanillaAkka = crossProject(JVMPlatform)
   .crossType(CrossType.Pure)
   .in(file("examples/vanilla-akka"))
   .enablePlugins(NoPublishPlugin)
-  .dependsOn(core)
+  .dependsOn(natchezAkkaHttp)
   .settings(
     name := "vanilla akka http example",
     libraryDependencies ++= Seq(
@@ -115,7 +137,7 @@ lazy val tests = crossProject(JVMPlatform)
   .crossType(CrossType.Pure)
   .in(file("tests"))
   .enablePlugins(NoPublishPlugin)
-  .dependsOn(core)
+  .dependsOn(natchezAkkaHttp)
   .settings(
     name := "tests",
     libraryDependencies ++= Seq("org.scalacheck" %%% "scalacheck" % scalacheck, "org.scalameta" %%% "munit" % munit)

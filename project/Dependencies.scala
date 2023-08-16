@@ -8,6 +8,8 @@ object Dependencies {
     val log4j      = "2.20.0"
     val munit      = "0.7.29"
     val natchez    = "0.3.3"
+    val pekko      = "1.0.1"
+    val pekkoHttp  = "1.0.0"
     val scalacheck = "1.17.0"
     val tapir      = "1.7.0"
   }
