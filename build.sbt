@@ -3,7 +3,7 @@ import laika.ast.Styles
 import laika.helium.config.{HeliumIcon, IconLink}
 import Dependencies.versions._
 
-// ThisBuild / tlBaseVersion := "0.3"
+ThisBuild / tlBaseVersion := "0.3"
 
 ThisBuild / organization     := "io.github.massimosiani"
 ThisBuild / organizationName := "Massimo Siani"
@@ -15,8 +15,11 @@ ThisBuild / developers       := List(
 ThisBuild / tlCiHeaderCheck         := true
 ThisBuild / tlCiScalafixCheck       := true
 ThisBuild / tlCiScalafmtCheck       := true
+ThisBuild / tlMimaPreviousVersions  := Set.empty  // TODO: remove after release
+// ThisBuild / tlSiteIsTypelevelProject := false
 ThisBuild / tlSitePublishBranch     := Some("main")
 ThisBuild / tlSonatypeUseLegacyHost := false
+// ThisBuild / tlTypelevelScalafixVersion := "0.1.5"
 
 val Scala213 = "2.13.11"
 ThisBuild / crossScalaVersions := Seq(Scala213)
