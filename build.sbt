@@ -3,7 +3,7 @@ import laika.ast.Styles
 import laika.helium.config.{HeliumIcon, IconLink}
 import Dependencies.versions._
 
-ThisBuild / tlBaseVersion := "0.3"
+// ThisBuild / tlBaseVersion := "0.3"
 
 ThisBuild / organization     := "io.github.massimosiani"
 ThisBuild / organizationName := "Massimo Siani"
@@ -61,7 +61,7 @@ lazy val docs = project
       .value
       .site
       .topNavigationBar(
-        homeLink = IconLink.internal(Root / "index.md", HeliumIcon.home),
+        homeLink = IconLink.internal(Root / "natchez-akka-http.md", HeliumIcon.home),
         navLinks = tlSiteApiUrl.value.toList.map { url =>
           IconLink.external(
             url.toString,
