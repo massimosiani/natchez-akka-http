@@ -16,10 +16,10 @@
 
 package natchez.pekko.http
 
-import org.apache.pekko.http.scaladsl.model.HttpRequest
-import org.apache.pekko.http.scaladsl.model.headers.RawHeader
 import cats.syntax.eq.*
 import natchez.Kernel
+import org.apache.pekko.http.scaladsl.model.HttpRequest
+import org.apache.pekko.http.scaladsl.model.headers.RawHeader
 import org.typelevel.ci.*
 
 object PekkoRequest {

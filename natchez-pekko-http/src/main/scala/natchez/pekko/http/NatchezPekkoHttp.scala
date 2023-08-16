@@ -16,11 +16,6 @@
 
 package natchez.pekko.http
 
-import org.apache.pekko.actor.ClassicActorSystemProvider
-import org.apache.pekko.http.scaladsl.Http
-import org.apache.pekko.http.scaladsl.model.{HttpRequest, HttpResponse}
-import org.apache.pekko.http.scaladsl.server.RouteResult.{Complete, Rejected}
-import org.apache.pekko.http.scaladsl.server.{RequestContext, Route}
 import cats.effect.kernel.Outcome
 import cats.effect.std.Dispatcher
 import cats.effect.syntax.all.*
@@ -29,6 +24,11 @@ import cats.effect.{Async, IO, Sync}
 import cats.syntax.all.*
 import natchez.*
 import natchez.pekko.http.PekkoRequest.toKernel
+import org.apache.pekko.actor.ClassicActorSystemProvider
+import org.apache.pekko.http.scaladsl.Http
+import org.apache.pekko.http.scaladsl.model.{HttpRequest, HttpResponse}
+import org.apache.pekko.http.scaladsl.server.RouteResult.{Complete, Rejected}
+import org.apache.pekko.http.scaladsl.server.{RequestContext, Route}
 
 import scala.concurrent.Future
 

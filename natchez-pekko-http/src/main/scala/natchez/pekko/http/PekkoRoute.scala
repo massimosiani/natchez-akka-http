@@ -16,11 +16,11 @@
 
 package natchez.pekko.http
 
-import org.apache.pekko.http.scaladsl.server.Route
 import cats.data.Kleisli
 import cats.effect.IO
 import cats.effect.std.Dispatcher
 import natchez.{Span, Trace}
+import org.apache.pekko.http.scaladsl.server.Route
 
 object PekkoRoute {
   def liftedRoute(f: Trace[IO] => Route)(implicit D: Dispatcher[IO]): Kleisli[IO, Span[IO], Route] =

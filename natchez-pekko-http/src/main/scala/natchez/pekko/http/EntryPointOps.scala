@@ -16,13 +16,13 @@
 
 package natchez.pekko.http
 
-import org.apache.pekko.http.scaladsl.server.Route
 import cats.data.Kleisli
 import cats.effect.Async
 import cats.effect.std.Dispatcher
 import cats.syntax.all.*
 import natchez.pekko.http.PekkoRequest.toKernel
 import natchez.{EntryPoint, Span}
+import org.apache.pekko.http.scaladsl.server.Route
 
 trait EntryPointOps[F[_]] {
 
