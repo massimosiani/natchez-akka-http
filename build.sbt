@@ -3,7 +3,7 @@ import laika.ast.Styles
 import laika.helium.config.{HeliumIcon, IconLink}
 import Dependencies.versions._
 
-ThisBuild / tlBaseVersion := "0.2"
+ThisBuild / tlBaseVersion := "0.3"
 
 ThisBuild / organization     := "io.github.massimosiani"
 ThisBuild / organizationName := "Massimo Siani"
