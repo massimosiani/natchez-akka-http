@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Massimo Siani
+ * Copyright 2024 Massimo Siani
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,7 +100,7 @@ object NatchezPekkoHttp {
       case Outcome.Errored(e)    => addRequestFields(requestContext.request) *> addErrorFields(e)
       case Outcome.Canceled()    =>
         addRequestFields(requestContext.request) *> Trace[F]
-          .put(("cancelled", TraceValue.BooleanValue(true)), Tags.error(true))
+          .put(("cancelled", TraceValue.BooleanValue(value = true)), Tags.error(bool = true))
     }
 
   private def addErrorFields[F[_]: Trace](e: Throwable): F[Unit] = Trace[F].attachError(e)

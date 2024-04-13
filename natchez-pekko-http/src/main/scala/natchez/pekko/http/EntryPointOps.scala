@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Massimo Siani
+ * Copyright 2024 Massimo Siani
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,11 +31,11 @@ trait EntryPointOps[F[_]] {
   def liftT(routes: Kleisli[F, Span[F], Route])(implicit A: Async[F], D: Dispatcher[F]): Route = { requestContext =>
     val request = requestContext.request
     val kernel  = toKernel(request)
-  D.unsafeToFuture(
-    self
-      .continueOrElseRoot(name = request.uri.path.toString(), kernel = kernel)
-      .use(span => routes.run(span).flatMap(route => A.fromFuture(A.delay(route(requestContext)))))
-  )
+    D.unsafeToFuture(
+      self
+        .continueOrElseRoot(name = request.uri.path.toString(), kernel = kernel)
+        .use(span => routes.run(span).flatMap(route => A.fromFuture(A.delay(route(requestContext)))))
+    )
   }
 }
 

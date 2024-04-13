@@ -1,6 +1,6 @@
 import laika.ast.Path.Root
 import laika.ast.Styles
-import laika.helium.config.{HeliumIcon, IconLink, ThemeNavigationSection, TextLink}
+import laika.helium.config.{HeliumIcon, IconLink, TextLink, ThemeNavigationSection}
 import Dependencies.versions._
 
 ThisBuild / tlBaseVersion := "0.3"
@@ -15,16 +15,15 @@ ThisBuild / developers       := List(
 ThisBuild / tlCiHeaderCheck          := true
 ThisBuild / tlCiScalafixCheck        := true
 ThisBuild / tlCiScalafmtCheck        := true
+ThisBuild / tlJdkRelease             := Some(11)
 ThisBuild / tlMimaPreviousVersions   := Set.empty // TODO: remove after release
 ThisBuild / tlSiteIsTypelevelProject := None
 ThisBuild / tlSitePublishBranch      := Some("main")
 ThisBuild / tlSonatypeUseLegacyHost  := false
 
-val Scala213 = "2.13.11"
+val Scala213 = "2.13.13"
 ThisBuild / crossScalaVersions := Seq(Scala213)
 ThisBuild / scalaVersion       := Scala213 // the default Scala
-
-ThisBuild / scalacOptions ++= (if (tlIsScala3.value) Seq() else Seq("-language:implicitConversions", "-Xsource:3"))
 
 lazy val root = tlCrossRootProject.aggregate(natchezAkkaHttp, natchezPekkoHttp, exampleTapir, exampleVanillaAkka, tests)
 
