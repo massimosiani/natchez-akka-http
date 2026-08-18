@@ -4,6 +4,8 @@
 
 A tiny integration library for Natchez and Akka/Pekko Http.
 
+`natchez-akka-http` supports Scala 2.13. `natchez-pekko-http` supports Scala 2.13 and Scala 3.
+
 Examples of usage are given for both the client and the server. A Tapir integration is also shown.
 
 Head over the [site](http://massimosiani.github.io/natchez-akka-http/) for further information.

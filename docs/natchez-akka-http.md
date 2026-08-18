@@ -4,6 +4,8 @@
 
 An integration library for Natchez and Akka Http.
 
+This module supports Scala 2.13.
+
 Inspired by [natchez-http4s](https://github.com/tpolecat/natchez-http4s).
 
 ## Installation
