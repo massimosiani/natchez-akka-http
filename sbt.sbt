@@ -1,7 +1,7 @@
-addCommandAlias("fix", "; all compile:scalafix test:scalafix it:scalafix; scalafmtAll; scalafmtSbt")
+addCommandAlias("fix", "; Compile / scalafix; Test / scalafix; scalafmtAll; scalafmtSbt")
 addCommandAlias(
   "fixCheck",
-  "; compile:scalafix --check ; test:scalafix --check ; it:scalafix --check; scalafmtCheckAll; scalafmtSbtCheck",
+  "; Compile / scalafix --check; Test / scalafix --check; scalafmtCheckAll; scalafmtSbtCheck",
 )
 addCommandAlias(
   "up2date",
@@ -13,5 +13,3 @@ addCommandAlias(
 )
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
-
-ThisBuild / scalafixScalaBinaryVersion := (if (tlIsScala3.value) "3.1" else "2.13")

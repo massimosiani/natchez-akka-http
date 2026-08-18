@@ -13,21 +13,19 @@ ThisBuild / developers       := List(
   tlGitHubDev("massimosiani", "Massimo Siani")
 )
 
-ThisBuild / tlCiHeaderCheck          := true
-ThisBuild / tlCiScalafixCheck        := true
-ThisBuild / tlCiScalafmtCheck        := true
-ThisBuild / tlJdkRelease             := Some(11)
-ThisBuild / tlMimaPreviousVersions   := Set.empty // TODO: remove after release
-ThisBuild / tlSiteIsTypelevelProject := None
-ThisBuild / tlSitePublishBranch      := Some("main")
-ThisBuild / tlSonatypeUseLegacyHost  := false
+ThisBuild / tlCiHeaderCheck        := true
+ThisBuild / tlCiScalafixCheck      := true
+ThisBuild / tlCiScalafmtCheck      := true
+ThisBuild / tlJdkRelease           := Some(11)
+ThisBuild / tlMimaPreviousVersions := Set.empty // TODO: remove after release
+ThisBuild / tlSitePublishBranch    := Some("main")
 
 ThisBuild / githubWorkflowJobSetup ~= { steps =>
   val (beforeSbt, fromSbt) = steps.span(!_.isInstanceOf[WorkflowStep.Sbt])
   beforeSbt ++ (WorkflowStep.Use(UseRef.Public("sbt", "setup-sbt", "v1")) +: fromSbt)
 }
 
-val Scala213 = "2.13.13"
+val Scala213 = "2.13.18"
 ThisBuild / crossScalaVersions := Seq(Scala213)
 ThisBuild / scalaVersion       := Scala213 // the default Scala
 
