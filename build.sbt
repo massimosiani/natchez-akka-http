@@ -20,11 +20,6 @@ ThisBuild / tlJdkRelease           := Some(11)
 ThisBuild / tlMimaPreviousVersions := Set.empty // TODO: remove after release
 ThisBuild / tlSitePublishBranch    := Some("main")
 
-ThisBuild / githubWorkflowJobSetup ~= { steps =>
-  val (beforeSbt, fromSbt) = steps.span(!_.isInstanceOf[WorkflowStep.Sbt])
-  beforeSbt ++ (WorkflowStep.Use(UseRef.Public("sbt", "setup-sbt", "v1")) +: fromSbt)
-}
-
 val Scala213 = "2.13.18"
 val Scala3   = "3.3.7"
 ThisBuild / crossScalaVersions := Seq(Scala213, Scala3)
