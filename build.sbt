@@ -21,6 +21,11 @@ ThisBuild / tlSiteIsTypelevelProject := None
 ThisBuild / tlSitePublishBranch      := Some("main")
 ThisBuild / tlSonatypeUseLegacyHost  := false
 
+ThisBuild / githubWorkflowJobSetup ~= { steps =>
+  val (beforeSbt, fromSbt) = steps.span(!_.isInstanceOf[WorkflowStep.Sbt])
+  beforeSbt ++ (WorkflowStep.Use(UseRef.Public("sbt", "setup-sbt", "v1")) +: fromSbt)
+}
+
 val Scala213 = "2.13.13"
 ThisBuild / crossScalaVersions := Seq(Scala213)
 ThisBuild / scalaVersion       := Scala213 // the default Scala
