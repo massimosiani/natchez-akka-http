@@ -26,7 +26,8 @@ ThisBuild / githubWorkflowJobSetup ~= { steps =>
 }
 
 val Scala213 = "2.13.18"
-ThisBuild / crossScalaVersions := Seq(Scala213)
+val Scala3   = "3.3.7"
+ThisBuild / crossScalaVersions := Seq(Scala213, Scala3)
 ThisBuild / scalaVersion       := Scala213 // the default Scala
 
 lazy val root = tlCrossRootProject.aggregate(natchezAkkaHttp, natchezPekkoHttp, exampleTapir, exampleVanillaAkka, tests)
@@ -35,8 +36,9 @@ lazy val natchezAkkaHttp = crossProject(JVMPlatform)
   .crossType(CrossType.Pure)
   .in(file("natchez-akka-http"))
   .settings(
-    name        := "natchez-akka-http",
-    description := "Integration for Natchez and Akka Http",
+    name               := "natchez-akka-http",
+    description        := "Integration for Natchez and Akka Http",
+    crossScalaVersions := Seq(Scala213),
     libraryDependencies ++= Seq(
       "com.typesafe.akka" %% "akka-actor"   % akka     % Optional,
       "com.typesafe.akka" %% "akka-http"    % akkaHttp % Optional,
@@ -52,6 +54,7 @@ lazy val natchezPekkoHttp = crossProject(JVMPlatform)
     description := "Integration for Natchez and Pekko Http",
     libraryDependencies ++= Seq(
       "org.apache.pekko" %% "pekko-actor"  % pekko,
+      "org.apache.pekko" %% "pekko-stream" % pekko,
       "org.apache.pekko" %% "pekko-http"   % pekkoHttp,
       "org.tpolecat"    %%% "natchez-core" % natchez,
     ),
@@ -102,7 +105,8 @@ lazy val exampleTapir = crossProject(JVMPlatform)
   .enablePlugins(NoPublishPlugin)
   .dependsOn(natchezAkkaHttp)
   .settings(
-    name := "tapir example",
+    name               := "tapir example",
+    crossScalaVersions := Seq(Scala213),
     libraryDependencies ++= Seq(
       "com.softwaremill.sttp.tapir" %%% "tapir-akka-http-server" % tapir,
       "com.softwaremill.sttp.tapir" %%% "tapir-core"             % tapir,
@@ -122,7 +126,8 @@ lazy val exampleVanillaAkka = crossProject(JVMPlatform)
   .enablePlugins(NoPublishPlugin)
   .dependsOn(natchezAkkaHttp)
   .settings(
-    name := "vanilla akka http example",
+    name               := "vanilla akka http example",
+    crossScalaVersions := Seq(Scala213),
     libraryDependencies ++= Seq(
       "com.typesafe.akka"       %% "akka-actor"       % akka,
       "com.typesafe.akka"       %% "akka-stream"      % akka,
@@ -142,7 +147,8 @@ lazy val tests = crossProject(JVMPlatform)
   .enablePlugins(NoPublishPlugin)
   .dependsOn(natchezAkkaHttp)
   .settings(
-    name := "tests",
+    name               := "tests",
+    crossScalaVersions := Seq(Scala213),
     libraryDependencies ++= Seq("org.scalacheck" %%% "scalacheck" % scalacheck, "org.scalameta" %%% "munit" % munit)
       .map(_ % Test),
   )
