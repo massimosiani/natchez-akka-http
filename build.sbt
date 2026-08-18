@@ -3,10 +3,11 @@ import laika.ast.Styles
 import laika.helium.config.{HeliumIcon, IconLink, TextLink, ThemeNavigationSection}
 import Dependencies.versions._
 
-ThisBuild / tlBaseVersion := "0.3"
+ThisBuild / tlBaseVersion := "0.4"
 
 ThisBuild / organization     := "io.github.massimosiani"
 ThisBuild / organizationName := "Massimo Siani"
+ThisBuild / startYear        := Some(2022)
 ThisBuild / licenses         := Seq(License.Apache2)
 ThisBuild / developers       := List(
   tlGitHubDev("massimosiani", "Massimo Siani")
@@ -20,6 +21,11 @@ ThisBuild / tlMimaPreviousVersions   := Set.empty // TODO: remove after release
 ThisBuild / tlSiteIsTypelevelProject := None
 ThisBuild / tlSitePublishBranch      := Some("main")
 ThisBuild / tlSonatypeUseLegacyHost  := false
+
+ThisBuild / githubWorkflowJobSetup ~= { steps =>
+  val (beforeSbt, fromSbt) = steps.span(!_.isInstanceOf[WorkflowStep.Sbt])
+  beforeSbt ++ (WorkflowStep.Use(UseRef.Public("sbt", "setup-sbt", "v1")) +: fromSbt)
+}
 
 val Scala213 = "2.13.13"
 ThisBuild / crossScalaVersions := Seq(Scala213)
