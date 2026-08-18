@@ -45,10 +45,10 @@ object Main extends IOApp.Simple {
   val entryPointR: Resource[IO, EntryPoint[IO]] = Resource.pure(Log.entryPoint[IO]("example-service"))
 
   // one shot definitions for IO/Future interop in tapir
-  implicit val fromFuture: (Future ~> IO) = new (Future ~> IO) {
+  implicit val fromFuture: Future ~> IO = new (Future ~> IO) {
     override def apply[A](fa: Future[A]): IO[A] = IO.fromFuture(IO(fa))
   }
-  implicit val toFuture: (IO ~> Future)   = new (IO ~> Future) {
+  implicit val toFuture: IO ~> Future   = new (IO ~> Future) {
     override def apply[A](fa: IO[A]): Future[A] = fa.unsafeToFuture()
   }
 
